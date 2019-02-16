@@ -17,16 +17,14 @@ RECORD_SECONDS = 40
 HOST = '192.168.137.1'    # The remote host
 PORT = 50007              # The same port as used by the server
 
-END = false
+END = False
 
 dataGlobal = None
 
 ########## Get ID from face Section ###########
 
 ########## Start Broadcasting ################
-
-# thread fuction 
-def threadSend(threadName): 
+def threadSend():
     global END
     server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
@@ -41,12 +39,10 @@ def threadSend(threadName):
         server.sendto(message, ('<broadcast>', 37020))
         print("message sent!")
         time.sleep(1)
-
-    # connection closed 
-    threadName.close() 
+    sys.exit()
 
 ######### Wait to Receive UDP #################
-def threadReceive(threadName):
+def threadReceive():
     global END
     global globalData
     client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # UDP
@@ -56,20 +52,34 @@ def threadReceive(threadName):
         data, addr = client.recvfrom(1024)
         globalData = data
         END = True
+    sys.exit()
 
-    # connection closed 
-    threadName.close() 
+####### Main #######
+t1 = threading.Thread(target=threadReceive)
+t1.start()
+t2 = threading.Thread(target=threadReceive)
+t2.start()
+wait = True
+# threadSend("Send").Start
+# threadReceive("Receive")
 
 ########### Wait for GlobalData to be filled to parse
-
-while True:
+while wait:
     if globalData:
-        ids = [int(s) for s in str.split() if s.isdigit()]
-        ip = id[0]
-
-
+        stuff = json.loads(globalData)
+        ip = stuff['ip']
+        port = stuff['port']
+        hubId = stuff['hubId']
+        clientId = stuff['clientId']
+        wait = False
 
 # globalData -> parse, IP and Port
+if not(ip == HOST):
+    print('ip did not match host')
+    sys.exit()
+if not(port == PORT):
+    print('port did not match port')
+    sys.exit()
 
 ########## Start Audio Streaming ###############
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
