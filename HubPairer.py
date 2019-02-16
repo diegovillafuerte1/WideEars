@@ -35,7 +35,7 @@ class HubPairer():
             print(toSend)
             while not self.END:
                 print(1)
-                server.sendto(message, ('255.255.255.255', 42345))
+                server.sendto(message, ('<broadcast>', 42345))
                 print("message sent!")
                 time.sleep(1)
             server.close()
@@ -79,7 +79,7 @@ class HubPairer():
 
         def startSendingAudioStream(clientIp, audioPort, clientId):
             audioSender = AudioStreamSender(clientIp, audioPort)
-            audioSendThread = threading.Thread(target=audioSender.startSending, args=(clientIp, audioPort, clientId))
+            audioSendThread = threading.Thread(target=audioSender.startSending)
             audioSendThread.start()
 
             return {"clientId":clientId, "audioSenderObject":audioSender}

@@ -37,7 +37,7 @@ class AudioStreamSender:
             data = stream.read(CHUNK)
             frames.append(data)
             s.sendall(data)
-
+            print("send")
         print("*done recording")
 
         stream.stop_stream()
@@ -75,13 +75,14 @@ class AudioStreamReciever:
                 print('Connected by', addr)
                 data = conn.recv(1024)
 
-                i=1
-                while data != '':
+                i = 1
+                while True:
+                    # used to be while data != " "
                     stream.write(data)
                     data = conn.recv(1024)
-                    i=i+1
+                    i = i + 1
                     print(i)
-                    frames.append(data)
+                    #frames.append(data)
 
                 wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
                 wf.setnchannels(CHANNELS)

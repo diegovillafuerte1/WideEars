@@ -13,7 +13,18 @@ MY_CLIENT_ID = "1"
 END = False
 
 
-
+def getMyIP():
+    try:
+        # !/usr/bin/python3
+        import socket
+        import os
+        gw = os.popen("ip -4 route show default").read().split()
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect((gw[2], 0))
+        ipaddr = s.getsockname()[0]
+        return ipaddr
+    except:
+        return socket.gethostbyname(socket.gethostname())
 def threadAcceptInvite():
     global END
 
@@ -40,9 +51,9 @@ def threadAcceptInvite():
                     # indefinitely when trying to receive data.
                     server.settimeout(1)
                     # server.bind(("", 37020))
-                    toSend = json.dumps({"hubId": invite_from_hubId, "port":AUDIO_PORT, "clientId": MY_CLIENT_ID, "clientIp": socket.gethostbyname(socket.gethostname())})
+                    toSend = json.dumps({"hubId": invite_from_hubId, "port":AUDIO_PORT, "clientId": MY_CLIENT_ID, "clientIp": getMyIP()})
                     message = toSend.encode()
-                    print(f"got an invite for me, responding with: {toSend}")
+                    print("got an invite for me, responding with:" + str(toSend))
                     server.sendto(message, ('255.255.255.255', 42346))
                     server.close()
                     END = True
