@@ -33,18 +33,19 @@ def scan_for_new_faces_thread():
         time.sleep(1)
 
 refresh_known_faces()
-threading.Thread(target=(scan_for_new_faces_thread()))
+new_faces_thread = threading.Thread(target=(scan_for_new_faces_thread()))
+new_faces_thread.start()
 
 
 def take_photo():
     result = subprocess.run(["fswebcam","unknown_faces.jpg"],shell=True).returncode #or false maybe?
-    if result == 0:
-        #photo successfully taken
+    try:
+        os.system("fswebcam unknown_faces.jpg")
+        print("took a photo, hopefully")
         return True
-    else:
-        print("Error capturing photo")
+    except:
+        print("error taking photo")
         return False
-
 def recognize_faces_in_photo():
     unknown_faces_image = face_recognition.load_image_file("unknown_faces.jpg")
     unknown_faces_encodings = face_recognition.face_encodings(unknown_faces_image)
@@ -69,6 +70,12 @@ def photo_recognize_pair(HubPairerInst):#use the above functions to do the whole
             HubPairerInst.pairAndStreamAudio(receiver_id)
 
 
-HubPairer(MY_HUB_ID)
 
-photo_recognize_pair(HubPairer)
+print("hi")
+
+HubPairerInst = HubPairer(MY_HUB_ID)
+
+while True:
+    photo_recognize_pair(HubPairerInst)
+    time.sleep(1)
+    print("running")
