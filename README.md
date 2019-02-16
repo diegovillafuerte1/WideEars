@@ -31,8 +31,4 @@ At low level RECEIVER has to have INPUT, not output
 HUB -> CAMERA INPUT / OUTPUT to WIFI (audio)/ AUDIO input from microphones
 
 On validation face to hub > hub broadcasts out a UDP packet containing RECEIVER ID, port, IP, to everything on network,
-First receiver with that ID starts receiving audio from Hub,
-
-
-
-s
+First receiver with that ID starts receiving audio from Hub
